@@ -19,7 +19,6 @@ El proyecto es una aplicación de smart-contracts que consiste en permitir a un 
 - Leer la billetera del hijo con la cámara via QR o tipeándola
 
 
-
 ## Contrato allowance.sol
 - Crear el contrato con: 5eth + address beneficiario
 - Obtiene fecha "now" y persiste
@@ -30,7 +29,7 @@ El proyecto es una aplicación de smart-contracts que consiste en permitir a un 
 - withdrawOwner(eth amount) verificar que sea el owner (modifier)
 - freeze() pausa el contrato
 - kill() elimina y los fondos los devuelve al owner
-- withdrawBeneficiary(eth contract.allowanceAmount) 
+- withdrawBeneficiary(eth contract.allowanceAmount)
 
 
-
+(10.211.55.3:8545)
