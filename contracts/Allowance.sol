@@ -14,6 +14,11 @@ contract Allowance {
         require(msg.sender == owner);
         _;
     }
+
+    modifier onlyBeneficiary(){
+        require(msg.sender == beneficiary);
+        _;
+    }    
     
     function addFunds(uint _amount) onlyOwner payable public returns (bool) {
         
@@ -28,11 +33,11 @@ contract Allowance {
 
     }
 
-    function withdrawOwner(uint _amount) public {
+    function withdrawOwner(uint _amount) onlyOwner public {
         owner.transfer(_amount);
     }
 
-    function withdrawBeneficiary() public {
+    function withdrawBeneficiary() onlyBeneficiary public {
         uint amount = 1000;
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
