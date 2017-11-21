@@ -9,7 +9,29 @@ contract Allowance {
         owner = msg.sender;
         beneficiary = _beneficiary;
     }
+
+    modifier onlyOwner(){
+        require(msg.sender == owner);
+        _;
+    }
     
+    function addFunds(uint _amount) onlyOwner payable public returns (bool) {
+        
+        return true;
+    }
+
+    function freeze() onlyOwner public {
+
+    }
+
+    function kill() onlyOwner public {
+
+    }
+
+    function withdrawOwner(uint _amount) public {
+        owner.transfer(_amount);
+    }
+
     function withdrawBeneficiary() public {
         uint amount = 1000;
         // Remember to zero the pending refund before

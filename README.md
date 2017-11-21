@@ -32,3 +32,8 @@ El proyecto es una aplicación de smart-contracts que consiste en permitir a un 
 
 
 (10.211.55.3:8545)
+
+### Consultas
+
+- Como llamar a un metodo deployado desde web3-repl
+- Como enviar ether a un contrato deployado
