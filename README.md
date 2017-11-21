@@ -37,3 +37,5 @@ El proyecto es una aplicación de smart-contracts que consiste en permitir a un 
 
 - Como llamar a un metodo deployado desde web3-repl
 - Como enviar ether a un contrato deployado
+- Como evitamos que pueda ejecutar más de una vez al método withdraw (hasta que sea minado?) esto es porque utilizamos la última fecha de withdrawal para hacer el control 
+- Como transferir eth de un contrato a cualquier dirección? Que el owner le pued enviar al beneficiario. (el beneficiario comienza con una billetera con saldo 0, y para hacer un withdrawal necesitará saldo para poder pagar el gas de la transacción)
