@@ -4,6 +4,7 @@ contract Allowance {
 
     address public owner;
     address public beneficiary;
+    bool public isAllowedToWithdraw;
     uint private contractStartDate;
     uint private contractLastWithdrawal;
     uint constant private MAX_WITHDRAWAL_AMOUNT = 100000000000000000; // 0.1 ETH
@@ -14,6 +15,8 @@ contract Allowance {
         beneficiary = _beneficiary;
         contractStartDate = now;
         contractLastWithdrawal = now;
+        isAllowedToWithdraw = true;
+        beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
     }
 
     modifier onlyOwner(){
@@ -26,7 +29,7 @@ contract Allowance {
         _;
     }    
     
-    function addFunds(uint _amount) onlyOwner payable public returns (bool) {
+    function addFunds() onlyOwner payable public returns (bool) {
         
         return true;
     }
@@ -46,7 +49,11 @@ contract Allowance {
     function withdrawBeneficiary() onlyBeneficiary public {
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
-        owner.transfer(MAX_WITHDRAWAL_AMOUNT);
+        if (isAllowedToWithdraw) {
+            owner.transfer(MAX_WITHDRAWAL_AMOUNT);
+            isAllowedToWithdraw = false;
+        }
+        
     }
 
     function setLastWithdrawalDate() private {

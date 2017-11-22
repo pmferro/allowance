@@ -70,12 +70,7 @@
   },
   {
     "constant": false,
-    "inputs": [
-      {
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [],
     "name": "addFunds",
     "outputs": [
       {
