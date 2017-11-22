@@ -13,6 +13,7 @@ var contractAddress = getContractAddress(contractFileName)
 
 var beneficiaryAddress = '0x1f9590835af641e007bce3f58ffb7d9e7f04c1fa'
 var ownerAddress = '0xa046e39a7c0f8ab90f5956976333891099a0ae43'
+var newBeneficiaryAddress = '0x7468b8d91a2ea61b4a83cfec80a7432fe7575f56'
 
 var contract = new web3.eth.Contract(json, contractAddress, beneficiaryAddress, {from: beneficiaryAddress, gasPrice: 20000000000});
 
@@ -79,6 +80,13 @@ web3.eth.getBalance(ownerAddress)
 // TRAE LA FECHA DE LA ULTIMA EXTRACCION EXITOSA
 contract.methods.getLastWithdrawalDate().call({from: beneficiaryAddress}, function(error, result){
     console.log("epoch de ultima extraccion:" + result)
+    console.log("--------------------------------------------------------------")
+});
+
+// CAMBIA LA DIRECCION DEL BENEFICIARIO
+contract.methods.updateBeneficiary(newBeneficiaryAddress).call({from: ownerAddress}, function(error, result){
+    //beneficiaryAddress = newBeneficiaryAddress
+    console.log("Se ha cambiado el beneficiario a:" + newBeneficiaryAddress)
     console.log("--------------------------------------------------------------")
 });
 

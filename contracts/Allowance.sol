@@ -11,6 +11,8 @@ contract Allowance {
 
 
     event FundsAdded(uint _amount);
+    event BeneficiaryUpdated(address _beneficiary);
+    event FundsWithdrawn(uint _amount);
 
     function Allowance(address _beneficiary) public payable {
         owner = msg.sender;
@@ -41,49 +43,50 @@ contract Allowance {
     //TO-DO
     function kill() onlyOwner view public {}
 
-
     function getBalance() onlyOwner public view returns (uint) {
         return this.balance;
     }
-
 
     function withdrawOwner(uint _amount) onlyOwner public {
         var amount = _amount;
         if (amount <= getBalance()) {
             owner.transfer(_amount);
+            FundsWithdrawn(_amount);
         }
     }
-
 
     function withdrawOwnerAll() onlyOwner public {
         owner.transfer(getBalance());
     }
 
-
     function withdrawBeneficiary() onlyBeneficiary public {
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
         if (now - contractLastWithdrawal > 60) {
-            beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
             setLastWithdrawalDate();
+            beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
         }
     }
 
+    function updateBeneficiary(address _beneficiary) onlyOwner public {
+        beneficiary = _beneficiary;
+        BeneficiaryUpdated(beneficiary);
+    }
 
     function setLastWithdrawalDate() private {
         contractLastWithdrawal = now;
     }
 
-
     function getLastWithdrawalDate() public view returns(uint) {
         return contractLastWithdrawal;
     } 
-
 
     function testContractConnection() public pure returns (string) {
         return "Contract connection OK";
     }
 
-    //function() public payable {}
+    function() public onlyOwner payable {
+        this.addFunds();
+    }
 
 }
