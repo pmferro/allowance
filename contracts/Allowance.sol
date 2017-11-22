@@ -10,6 +10,9 @@ contract Allowance {
     uint constant private MAX_WITHDRAWAL_AMOUNT = 100000000000000000; // 0.1 ETH
     uint constant private MIN_WITHDRAWAL_FREQUENCY = 7*60*60*24; // 7 dias
 
+
+    event FundsAdded(uint _amount);
+
     function Allowance(address _beneficiary) public payable {
         owner = msg.sender;
         beneficiary = _beneficiary;
@@ -29,7 +32,8 @@ contract Allowance {
         _;
     }    
     
-    function addFunds() onlyOwner payable public returns (bool) {     
+    function addFunds() onlyOwner payable public returns (bool) {  
+        FundsAdded(msg.value);   
         return true;
     }
 
@@ -49,6 +53,12 @@ contract Allowance {
             owner.transfer(_amount);
         }
     }
+
+
+    function withdrawOwnerAll() onlyOwner public {
+        owner.transfer(getBalance());
+    }
+
 
     function withdrawBeneficiary() onlyBeneficiary public {
         // Remember to zero the pending refund before

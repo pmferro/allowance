@@ -23,7 +23,7 @@ contract.methods.testContractConnection().call({from: beneficiaryAddress}, funct
     console.log("--------------------------------------------------------------")
 });
 
-/*
+
 console.log("Ejecutamos withdrawBeneficiary: -------------------------------")
 contract.methods.withdrawBeneficiary().send({from: beneficiaryAddress})
 .then(async function(receipt){
@@ -37,26 +37,25 @@ contract.methods.withdrawBeneficiary().send({from: beneficiaryAddress})
     //console.log(web3.eth.getBalance(web3.eth.Accounts));
     //console.log(web3.eth.getBalance(web3.eth.accounts[1]));
 });
+/*
 */
 
+/*
 console.log("Ejecutamos withdrawOwner: -------------------------------")
 contract.methods.withdrawOwner(1000000000000000000).send({from: ownerAddress})
 .then(async function(receipt){
     console.log(receipt);
 });
 
-
-
-
-/**/
+*/
 
 // Agregar fondos al contrato funciona OK
 /*
-contract.methods.addFunds().send({from: ownerAddress, to: contractAddress, value: 5000000000000000000})
+var amount = 5000000000000000000;
+contract.methods.addFunds().send({from: ownerAddress, to: contractAddress, value: amount})
 .then(function(receipt){
-    console.log("OK");
+    console.log("Funds added:", amount);
 });
-
 */
 
 console.log("B A L A N C E S ======================================")
