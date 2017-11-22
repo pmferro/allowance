@@ -16,7 +16,7 @@ contract Allowance {
         contractStartDate = now;
         contractLastWithdrawal = now;
         isAllowedToWithdraw = true;
-        //beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
+        beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
     }
 
     modifier onlyOwner(){
@@ -29,47 +29,52 @@ contract Allowance {
         _;
     }    
     
-    function addFunds() onlyOwner payable public returns (bool) {
-        
+    function addFunds() onlyOwner payable public returns (bool) {     
         return true;
     }
 
-    function freeze() onlyOwner view public {
+    //TO-DO
+    function freeze() onlyOwner view public {}
 
-    }
-
-    function kill() onlyOwner view public {
-        
-    }
+    //TO-DO
+    function kill() onlyOwner view public {}
 
     function getBalance() onlyOwner public view returns (uint) {
         return this.balance;
     }
 
     function withdrawOwner(uint _amount) onlyOwner public {
-        owner.transfer(_amount);
+        var amount = _amount;
+        if (amount <= getBalance()) {
+            owner.transfer(_amount);
+        }
     }
 
-    function withdrawOwner2(uint _amount) onlyOwner public payable {
-        owner.transfer(_amount);
-    }
-
-    function withdrawBeneficiary() public payable {
+    function withdrawBeneficiary() onlyBeneficiary public {
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
-        if (isAllowedToWithdraw) {
-            //this.transfer(MAX_WITHDRAWAL_AMOUNT);
-            isAllowedToWithdraw = false;
+        if (now - contractLastWithdrawal > 60) {
+            isAllowedToWithdraw = true;
+            if (isAllowedToWithdraw) {
+                isAllowedToWithdraw = false;
+                beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
+                setLastWithdrawalDate();
+            }
         }
-        
     }
 
     function setLastWithdrawalDate() private {
         contractLastWithdrawal = now;
     }
 
+    function getLastWithdrawalDate() public view returns(uint) {
+        return contractLastWithdrawal;
+    } 
+
     function testContractConnection() public pure returns (string) {
-        return "Contract connection OK deploy 12:19 PM";
+        return "Contract connection OK";
     }
+
+    //function() public payable {}
 
 }
