@@ -4,7 +4,6 @@ contract Allowance {
 
     address public owner;
     address public beneficiary;
-    bool public isAllowedToWithdraw;
     uint private contractStartDate;
     uint private contractLastWithdrawal;
     uint constant private MAX_WITHDRAWAL_AMOUNT = 100000000000000000; // 0.1 ETH
@@ -18,7 +17,6 @@ contract Allowance {
         beneficiary = _beneficiary;
         contractStartDate = now;
         contractLastWithdrawal = now;
-        isAllowedToWithdraw = true;
         beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
     }
 
@@ -66,12 +64,8 @@ contract Allowance {
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
         if (now - contractLastWithdrawal > 60) {
-            isAllowedToWithdraw = true;
-            if (isAllowedToWithdraw) {
-                isAllowedToWithdraw = false;
-                beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
-                setLastWithdrawalDate();
-            }
+            beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
+            setLastWithdrawalDate();
         }
     }
 
