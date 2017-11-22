@@ -39,7 +39,7 @@ contract Allowance {
     }
 
     function kill() onlyOwner public {
-
+        // tbc
     }
 
     function getBalance() onlyOwner public view returns (uint) {
