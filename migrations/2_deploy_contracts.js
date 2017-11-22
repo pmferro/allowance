@@ -1,6 +1,6 @@
 var Allowance = artifacts.require("./Allowance.sol");
 
-var beneficiaryAddress = "0xa1b115bdf19bf2312497c8ce7792138e69f51af6"
+var beneficiaryAddress = "0xf8a617471061241f2464f0ecc4dd6d2d4514c3fb"
 
 module.exports = function(deployer) {
   deployer.deploy(Allowance, beneficiaryAddress, {value:1000000});

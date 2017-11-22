@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/pmferro/allowance#readme",
   "dependencies": {
+    "simpleasync": "0.0.8",
     "truffle": "^4.0.1",
     "web3": "^1.0.0-beta.26"
   }

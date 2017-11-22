@@ -16,7 +16,7 @@ contract Allowance {
         contractStartDate = now;
         contractLastWithdrawal = now;
         isAllowedToWithdraw = true;
-        beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
+        //beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
     }
 
     modifier onlyOwner(){
@@ -34,12 +34,12 @@ contract Allowance {
         return true;
     }
 
-    function freeze() onlyOwner public {
+    function freeze() onlyOwner view public {
 
     }
 
-    function kill() onlyOwner public {
-        // tbc
+    function kill() onlyOwner view public {
+        
     }
 
     function getBalance() onlyOwner public view returns (uint) {
@@ -54,11 +54,11 @@ contract Allowance {
         owner.transfer(_amount);
     }
 
-    function withdrawBeneficiary() onlyBeneficiary public {
+    function withdrawBeneficiary() public payable {
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
         if (isAllowedToWithdraw) {
-            owner.transfer(MAX_WITHDRAWAL_AMOUNT);
+            //this.transfer(MAX_WITHDRAWAL_AMOUNT);
             isAllowedToWithdraw = false;
         }
         
@@ -68,8 +68,8 @@ contract Allowance {
         contractLastWithdrawal = now;
     }
 
-    function testContract() public pure returns (string) {
-        return "Method call test ok";
+    function testContractConnection() public pure returns (string) {
+        return "Contract connection OK deploy 12:19 PM";
     }
 
 }
