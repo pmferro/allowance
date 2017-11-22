@@ -42,7 +42,15 @@ contract Allowance {
 
     }
 
+    function getBalance() onlyOwner public view returns (uint) {
+        return this.balance;
+    }
+
     function withdrawOwner(uint _amount) onlyOwner public {
+        owner.transfer(_amount);
+    }
+
+    function withdrawOwner2(uint _amount) onlyOwner public payable {
         owner.transfer(_amount);
     }
 
