@@ -4,16 +4,27 @@ contract Allowance {
 
     address public owner;
     address public beneficiary;
+    uint private contractStartDate;
+    uint private contractLastWithdrawal;
+    uint constant private MAX_WITHDRAWAL_AMOUNT = 100000000000000000; // 0.1 ETH
+    uint constant private MIN_WITHDRAWAL_FREQUENCY = 7*60*60*24; // 7 dias
 
     function Allowance(address _beneficiary) public payable {
         owner = msg.sender;
         beneficiary = _beneficiary;
+        contractStartDate = now;
+        contractLastWithdrawal = now;
     }
 
     modifier onlyOwner(){
         require(msg.sender == owner);
         _;
     }
+
+    modifier onlyBeneficiary(){
+        require(msg.sender == beneficiary);
+        _;
+    }    
     
     function addFunds(uint _amount) onlyOwner payable public returns (bool) {
         
@@ -28,15 +39,18 @@ contract Allowance {
 
     }
 
-    function withdrawOwner(uint _amount) public {
+    function withdrawOwner(uint _amount) onlyOwner public {
         owner.transfer(_amount);
     }
 
-    function withdrawBeneficiary() public {
-        uint amount = 1000;
+    function withdrawBeneficiary() onlyBeneficiary public {
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
-        owner.transfer(amount);
+        owner.transfer(MAX_WITHDRAWAL_AMOUNT);
+    }
+
+    function setLastWithdrawalDate() private {
+        contractLastWithdrawal = now;
     }
 
     function testContract() public pure returns (string) {
