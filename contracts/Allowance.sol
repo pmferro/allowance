@@ -43,9 +43,11 @@ contract Allowance {
     //TO-DO
     function kill() onlyOwner view public {}
 
+
     function getBalance() onlyOwner public view returns (uint) {
         return this.balance;
     }
+
 
     function withdrawOwner(uint _amount) onlyOwner public {
         var amount = _amount;
@@ -73,13 +75,16 @@ contract Allowance {
         }
     }
 
+
     function setLastWithdrawalDate() private {
         contractLastWithdrawal = now;
     }
 
+
     function getLastWithdrawalDate() public view returns(uint) {
         return contractLastWithdrawal;
     } 
+
 
     function testContractConnection() public pure returns (string) {
         return "Contract connection OK";
