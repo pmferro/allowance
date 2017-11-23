@@ -28,7 +28,7 @@ contract.methods.testContractConnection().call({from: beneficiaryAddress}, funct
 console.log("Ejecutamos withdrawBeneficiary: -------------------------------")
 contract.methods.withdrawBeneficiary().send({from: beneficiaryAddress})
 .then(async function(receipt){
-    //console.log(receipt);
+    console.log(receipt);
     //web3.eth.getAccounts(console.log);
 
     //var accounts = await web3.eth.getAccounts();

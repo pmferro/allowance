@@ -18,7 +18,7 @@ contract Allowance {
         owner = msg.sender;
         beneficiary = _beneficiary;
         contractStartDate = now;
-        contractLastWithdrawal = now;
+        //contractLastWithdrawal = now;
         beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
     }
 
@@ -51,7 +51,6 @@ contract Allowance {
         var amount = _amount;
         if (amount <= getBalance()) {
             owner.transfer(_amount);
-            FundsWithdrawn(_amount);
         }
     }
 
@@ -62,10 +61,12 @@ contract Allowance {
     function withdrawBeneficiary() onlyBeneficiary public {
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
-        if (now - contractLastWithdrawal > 60) {
-            setLastWithdrawalDate();
-            beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
-        }
+        require(now - contractLastWithdrawal > 60);
+        //if (now - contractLastWithdrawal > 60) {
+        setLastWithdrawalDate();
+        beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
+        FundsWithdrawn(MAX_WITHDRAWAL_AMOUNT);
+        //}
     }
 
     function updateBeneficiary(address _beneficiary) onlyOwner public {
