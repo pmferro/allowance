@@ -6,7 +6,7 @@ contract Allowance {
     address public beneficiary;
     uint private contractStartDate;
     uint private contractLastWithdrawal;
-    uint constant private MAX_WITHDRAWAL_AMOUNT = 1 / 10 ether; // 0.1 ETH
+    uint constant private MAX_WITHDRAWAL_AMOUNT = 1 ether / 10; // 0.1 ETH
     uint constant private MIN_WITHDRAWAL_FREQUENCY = 7 days; // 7 dias
     bool public withdrawnIsFrozen = false;
 
@@ -44,12 +44,12 @@ contract Allowance {
         return true;
     }
 
-    function freeze() onlyOwner view public {
+    function freeze() onlyOwner public {
         withdrawnIsFrozen = true;
         WithdrawIsFrozen(true, now);
     }
 
-    function unFreeze() onlyOwner view public {
+    function unFreeze() onlyOwner public {
         withdrawnIsFrozen = false;
         WithdrawIsFrozen(false, now);
     }    
