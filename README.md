@@ -11,10 +11,10 @@ El proyecto es una aplicación de smart-contracts que consiste en permitir a un 
 - El retiro inicialmente es fijo de 0.1 eth y se cargará el contrato inicialmente con 5 eth (esto duraría aproximadamente un año, 50 semanas)
 
 ## Demo
-Iniciar Test RPC con limit más alto
+Iniciar Test RPC con gasLimit más alto
 
 ```sh
-testrpc -l 45000000000000000
+testrpc -l 45000000000000000 // gasLimit
 ```
 
 
