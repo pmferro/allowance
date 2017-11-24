@@ -18,8 +18,6 @@ testrpc -l 45000000000000000
 ```
 
 
-
-
 ## Ideas:
 - Incentivos por ahorro
 - Incentivos puntuales (cumpleaños, regalos, sorpresa, ratón pérez)
