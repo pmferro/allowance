@@ -34,7 +34,6 @@ El proyecto es una aplicación de smart-contracts que consiste en permitir a un 
 (10.211.55.3:8545)
 
 ### Consultas
-
 - Como llamar a un metodo deployado desde web3-repl
 - Como enviar ether a un contrato deployado
 - Como evitamos que pueda ejecutar más de una vez al método withdraw (hasta que sea minado?) esto es porque utilizamos la última fecha de withdrawal para hacer el control 
@@ -47,7 +46,8 @@ El proyecto es una aplicación de smart-contracts que consiste en permitir a un 
 - Guardar en el storage del contrato / acceder. Hay formato específico? Podemos tener varias listas distintas?: ej: transacciones.
 
 ### Referencias:
-Deploy a Rinkeby: https://blog.abuiles.com/blog/2017/07/09/deploying-truffle-contracts-to-rinkeby/
+- Deploy a Rinkeby: https://blog.abuiles.com/blog/2017/07/09/deploying-truffle-contracts-to-rinkeby/
+- Tests: https://github.com/e11-io/crypto-wars-solidity/tree/master/test
 
 ### Notas:
 - Al que manda por error eth no aceptarlo. función fallback
