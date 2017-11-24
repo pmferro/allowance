@@ -8,14 +8,14 @@ contract TestAllowance {
     Allowance allowanceContract = Allowance(DeployedAddresses.Allowance());
 
 
-  /*
+ 
     function testInitialBalanceUsingDeployedContract() public {
         uint initialBalance = 5 ether;
        // Assert.equal(allowanceContract.getBalance(), initialBalance, "The contract should have 5 eth when deployed.");  
         Assert.equal(5 ether,initialBalance, "The contract should have 5 eth when deployed.");  
     }
 
-
+ /*
     // Testing the addfunds() function
     //function testAddFunds() {  
     //}
