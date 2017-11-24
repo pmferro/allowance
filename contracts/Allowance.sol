@@ -13,7 +13,7 @@ contract Allowance {
 
     event FundsAdded(uint _amount);
     event BeneficiaryUpdated(address _beneficiary);
-    event FundsWithdrawn(uint _amount);
+    event FundsWithdrawn(address _address, uint _amount);
     event WithdrawIsFrozen(bool _frozen, uint _date);
 
     function Allowance(address _beneficiary) public payable {
@@ -71,6 +71,7 @@ contract Allowance {
 
     function withdrawOwnerAll() onlyOwner public {
         owner.transfer(getBalance());
+        FundsWithdrawn(owner, MAX_WITHDRAWAL_AMOUNT);
     }
 
     function withdrawBeneficiary() onlyBeneficiary freezeWithdrawBeneficiary public {
@@ -80,7 +81,7 @@ contract Allowance {
         //if (now - contractLastWithdrawal > 60) {
         setLastWithdrawalDate();
         beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
-        FundsWithdrawn(MAX_WITHDRAWAL_AMOUNT);
+        FundsWithdrawn(beneficiary, MAX_WITHDRAWAL_AMOUNT);
         //}
     }
 
