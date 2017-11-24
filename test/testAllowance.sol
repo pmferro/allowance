@@ -7,6 +7,7 @@ import "../contracts/Allowance.sol";
 contract TestAllowance {
     Allowance allowanceContract = Allowance(DeployedAddresses.Allowance());
 
+
   /*
     function testInitialBalanceUsingDeployedContract() public {
         uint initialBalance = 5 ether;
