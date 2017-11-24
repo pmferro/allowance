@@ -6,13 +6,15 @@ contract Allowance {
     address public beneficiary;
     uint private contractStartDate;
     uint private contractLastWithdrawal;
-    uint constant private MAX_WITHDRAWAL_AMOUNT = 100000000000000000; // 0.1 ETH
-    uint constant private MIN_WITHDRAWAL_FREQUENCY = 7*60*60*24; // 7 dias
+    uint constant private MAX_WITHDRAWAL_AMOUNT = 1 / 10 ether; // 0.1 ETH
+    uint constant private MIN_WITHDRAWAL_FREQUENCY = 7 days; // 7 dias
+    bool public withdrawnIsFrozen = false;
 
 
     event FundsAdded(uint _amount);
     event BeneficiaryUpdated(address _beneficiary);
     event FundsWithdrawn(uint _amount);
+    event WithdrawIsFrozen(bool _frozen, uint _date);
 
     function Allowance(address _beneficiary) public payable {
         owner = msg.sender;
@@ -31,17 +33,30 @@ contract Allowance {
         require(msg.sender == beneficiary);
         _;
     }    
+
+    modifier freezeWithdrawBeneficiary(){
+        require(withdrawnIsFrozen != true);
+        _;
+    }    
     
     function addFunds() onlyOwner payable public returns (bool) {  
         FundsAdded(msg.value);   
         return true;
     }
 
-    //TO-DO
-    function freeze() onlyOwner view public {}
+    function freeze() onlyOwner view public {
+        withdrawnIsFrozen = true;
+        WithdrawIsFrozen(true, now);
+    }
 
-    //TO-DO
-    function kill() onlyOwner view public {}
+    function unFreeze() onlyOwner view public {
+        withdrawnIsFrozen = false;
+        WithdrawIsFrozen(false, now);
+    }    
+
+    function kill() onlyOwner public {
+        selfdestruct(owner);
+    }
 
     function getBalance() onlyOwner public view returns (uint) {
         return this.balance;
@@ -58,7 +73,7 @@ contract Allowance {
         owner.transfer(getBalance());
     }
 
-    function withdrawBeneficiary() onlyBeneficiary public {
+    function withdrawBeneficiary() onlyBeneficiary freezeWithdrawBeneficiary public {
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
         require(now - contractLastWithdrawal > 60);
