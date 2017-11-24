@@ -13,9 +13,9 @@ El proyecto es una aplicación de smart-contracts que consiste en permitir a un 
 ## Demo
 Iniciar Test RPC con limit más alto
 
-´´
+```sh
 testrpc -l 45000000000000000
-´´
+```
 
 
 
