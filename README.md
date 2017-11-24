@@ -10,6 +10,16 @@ El proyecto es una aplicación de smart-contracts que consiste en permitir a un 
 - Se debe crear una address para que el hijo pueda interactuar con el contrato y hacer retiros.
 - El retiro inicialmente es fijo de 0.1 eth y se cargará el contrato inicialmente con 5 eth (esto duraría aproximadamente un año, 50 semanas)
 
+## Demo
+Iniciar Test RPC con limit más alto
+
+´´
+testrpc -l 45000000000000000
+´´
+
+
+
+
 ## Ideas:
 - Incentivos por ahorro
 - Incentivos puntuales (cumpleaños, regalos, sorpresa, ratón pérez)
@@ -54,3 +64,5 @@ El proyecto es una aplicación de smart-contracts que consiste en permitir a un 
 - modifier noreentrancy
 - KOVAN
 - Ver ENS
+
+
