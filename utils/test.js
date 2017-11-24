@@ -11,9 +11,9 @@ json = getContractABI(contractFileName)
 
 var contractAddress = getContractAddress(contractFileName)
 
-var beneficiaryAddress = '0x6bbbda4ec2fc2061fbf91ecd908eaf02cc7817a1'
-var ownerAddress = '0x883bfbac8d9399066749901c7f462a7999625993'
-var newBeneficiaryAddress = '0x496d32bf56167e6b34b7451fa6dc208547f9ca29'
+var beneficiaryAddress = '0xee86ec5a1ae8e01b1c99229636ec43ba96308653'
+var ownerAddress = '0x7c7abe3c78b81daa89ffb325ed71709debd5a4dd'
+var newBeneficiaryAddress = '0x8922246a94dd3bef036f204a4e36a04577361eb9'
 
 var contract = new web3.eth.Contract(json, contractAddress, beneficiaryAddress, {from: beneficiaryAddress, gasPrice: 20000000000});
 
@@ -37,9 +37,12 @@ contract.methods.withdrawBeneficiary().send({from: beneficiaryAddress})
 
     //console.log(web3.eth.getBalance(web3.eth.Accounts));
     //console.log(web3.eth.getBalance(web3.eth.accounts[1]));
+
 });
 /*
 */
+
+console.log("Contract Address es: ", contractAddress)
 
 /*
 console.log("Ejecutamos withdrawOwner: -------------------------------")
@@ -110,6 +113,6 @@ function getContractAddress(filename) {
     var input = fs.readFileSync(filename).toString();
     var contract = JSON.parse(input);
     //return contract.compiler.name;
-    return contract.networks[1511532452869].address;
+    return contract.networks[1511543941540].address;
     
 }

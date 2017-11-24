@@ -39,7 +39,12 @@ testrpc -l 45000000000000000 // gasLimit
 - withdrawBeneficiary(eth contract.allowanceAmount)
 
 
-### Consultas
+### Consultas pendientes
+- Acceder a variables publicas del contrato con los getters desde app.js
+- Al traer el balance dede la app, aparece con 3 ceros.
+- significado de "...this.state"
+
+### Consultas vistas
 - Como llamar a un metodo deployado desde web3-repl
 - Como enviar ether a un contrato deployado
 - Como evitamos que pueda ejecutar más de una vez al método withdraw (hasta que sea minado?) esto es porque utilizamos la última fecha de withdrawal para hacer el control 
