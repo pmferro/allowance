@@ -90,6 +90,10 @@ contract Allowance {
         BeneficiaryUpdated(beneficiary);
     }
 
+    function getBeneficiary() public view returns(address) {
+        return beneficiary;
+    } 
+
     function setLastWithdrawalDate() private {
         contractLastWithdrawal = now;
     }
