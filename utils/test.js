@@ -12,7 +12,7 @@ json = getContractABI(contractFileName)
 var contractAddress = getContractAddress(contractFileName)
 
 var beneficiaryAddress = '0xee86ec5a1ae8e01b1c99229636ec43ba96308653'
-var ownerAddress = '0x7c7abe3c78b81daa89ffb325ed71709debd5a4dd'
+var ownerAddress = '0x7C7abE3c78b81DaA89Ffb325eD71709debd5A4Dd'
 var newBeneficiaryAddress = '0x8922246a94dd3bef036f204a4e36a04577361eb9'
 
 var contract = new web3.eth.Contract(json, contractAddress, beneficiaryAddress, {from: beneficiaryAddress, gasPrice: 20000000000});

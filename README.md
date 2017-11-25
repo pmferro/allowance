@@ -14,7 +14,7 @@ El proyecto es una aplicación de smart-contracts que consiste en permitir a un 
 Iniciar Test RPC con gasLimit más alto
 
 ```sh
-testrpc -l 45000000000000000 // gasLimit
+testrpc -l 4500000000000 // gasLimit
 ```
 
 
