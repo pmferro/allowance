@@ -1,7 +1,7 @@
 //var SimpleStorage = artifacts.require("./SimpleStorage.sol");
 var Allowance = artifacts.require("./Allowance.sol");
 
-var beneficiaryAddress = "0xee86ec5a1ae8e01b1c99229636ec43ba96308653"
+var beneficiaryAddress = "0xac6071d65a97519c8e670111d8d0c1ad7a09e376"
 
 module.exports = function(deployer) {
   //deployer.deploy(SimpleStorage);
