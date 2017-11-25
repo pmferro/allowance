@@ -14,8 +14,11 @@ class App extends Component {
 
     this.state = {
       storageValue: 0,
+      contractAddress: "",
       contractBalance: "",
-      lastWithdrawalDate: "",
+      lastWithdrawalDate: null,
+      ownerAddress: "",
+      message: "",
       web3: null
     }
   }
@@ -38,7 +41,7 @@ class App extends Component {
     })
   }
 
-  instantiateContract() {
+  async instantiateContract() {
     /*
      * SMART CONTRACT EXAMPLE
      *
@@ -46,34 +49,28 @@ class App extends Component {
      * state management library, but for convenience I've placed them here.
      */
 
-    const contract = require('truffle-contract')
-    const allowance = contract(AllowanceContract)
-    allowance.setProvider(this.state.web3.currentProvider)
+    try {
+      let contract = require('truffle-contract')
+      let allowance = contract(AllowanceContract)
+      allowance.setProvider(this.state.web3.currentProvider)
+  
+      let accounts = await this.state.web3.eth.getAccounts();
+      let allowanceInstance = await allowance.deployed();
+      let contractBalanceValue = await allowanceInstance.getBalance.call({from: accounts[0]});
+      let lastWithdrawalDateValue = await allowanceInstance.getLastWithdrawalDate();
+      let beneficiary = await allowanceInstance.getBeneficiary();
 
-    // Declaring this for later so we can chain functions on SimpleStorage.
-    var allowanceInstance
+      console.log(lastWithdrawalDateValue)
+      console.log(allowanceInstance)
 
-    // Get accounts.
-    this.state.web3.eth.getAccounts((error, accounts) => {allowance.deployed().then((instance) => {
-        // 1 START --------
-        allowanceInstance = instance
-
-        // Stores a given value, 5 by default.
-        return allowanceInstance.getLastWithdrawalDate().then((result) => {
-        // Get the value from the contract to prove it worked.
-        //return allowanceInstance.get.call(accounts[0])
-        //}).then((result) => {
-        // Update state with the result.
-        //return this.setState({ lastWithdrawalDate: result.c[0] })
-        //return allowanceInstance.getBalance().then((result) => {
-        //  return this.setState({contractBalance: result.c[0]})
-        //})
-
-
-        
-      })
-      })
-    })
+      this.setState({ contractAddress: allowanceInstance.address});
+      this.setState({ ownerAddress: accounts[0]});
+      this.setState({ beneficiaryAddress: beneficiary});
+      this.setState({ lastWithdrawalDate: lastWithdrawalDateValue.c[0]});
+      this.setState({ contractBalance: contractBalanceValue.c[0]});
+  
+      } catch (e){
+    }
   }
 
 
@@ -90,13 +87,12 @@ class App extends Component {
             <div className="pure-u-1-1">
               <h1>Welcome!</h1>
               <h2>Allowance Smart Contract Example</h2>
-              <p>Contract Address</p>
-              <p>Contract Address</p>
-              <p>Contract Address</p>
-              <p>Contract Address</p>
+              <p>Contract Address: {this.state.contractAddress}</p>
+              <p>Owner Address is: {this.state.ownerAddress}</p>
+              <p>Beneficiary Address is: {this.state.beneficiaryAddress}</p>
               <p>lastWithdrawalDate: {this.state.lastWithdrawalDate}</p>
-            
               <p>Contract Balance is: {this.state.contractBalance}</p>
+
             </div>
           </div>
         </main>
