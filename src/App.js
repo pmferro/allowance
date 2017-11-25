@@ -8,6 +8,8 @@ import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
 
+import WithdrawFromContract from './utils/WithdrawFromContract'
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -73,13 +75,15 @@ class App extends Component {
     }
   }
 
-
+  async onContractAddressAdded(_contractAddress) {
+    this.setState({ contractAddress: _contractAddress});
+  }
   
   render() {
     return (
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
-            <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
+            <a href="#" className="pure-menu-heading pure-menu-link">Allowance - DEMO</a>
         </nav>
 
         <main className="container">
@@ -92,7 +96,8 @@ class App extends Component {
               <p>Beneficiary Address is: {this.state.beneficiaryAddress}</p>
               <p>lastWithdrawalDate: {this.state.lastWithdrawalDate}</p>
               <p>Contract Balance is: {this.state.contractBalance}</p>
-
+              <hr/>
+              <WithdrawFromContract onContractAddressAdded={this.onContractAddressAdded.bind(this)} />
             </div>
           </div>
         </main>
