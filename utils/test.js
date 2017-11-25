@@ -11,9 +11,9 @@ json = getContractABI(contractFileName)
 
 var contractAddress = getContractAddress(contractFileName)
 
-var beneficiaryAddress = '0xee86ec5a1ae8e01b1c99229636ec43ba96308653'
-var ownerAddress = '0x7C7abE3c78b81DaA89Ffb325eD71709debd5A4Dd'
-var newBeneficiaryAddress = '0x8922246a94dd3bef036f204a4e36a04577361eb9'
+var beneficiaryAddress = '0x54b256c9ef7a2e6ddc5ca461d03f212776b80da8'
+var ownerAddress = '0xd516520b5367f068252bef5b8f6dd0512efca8e4'
+var newBeneficiaryAddress = '0x2c029bec7b0a69f180468fc79c0afdd241abd7ee'
 
 var contract = new web3.eth.Contract(json, contractAddress, beneficiaryAddress, {from: beneficiaryAddress, gasPrice: 20000000000});
 
@@ -113,6 +113,6 @@ function getContractAddress(filename) {
     var input = fs.readFileSync(filename).toString();
     var contract = JSON.parse(input);
     //return contract.compiler.name;
-    return contract.networks[1511543941540].address;
+    return contract.networks[1511611200376].address;
     
 }
