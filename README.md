@@ -1,5 +1,7 @@
 # Allowance MVP
 El proyecto es una aplicación de smart-contracts que consiste en permitir a un Padre administrar la mensualidad de su(s) hijo(s)
+
+
 [![Coverage Status](https://coveralls.io/repos/github/pmferro/allowance/badge.svg?branch=master)](https://coveralls.io/github/pmferro/allowance?branch=master)
 
 ## Reglas:
