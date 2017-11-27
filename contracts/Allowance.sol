@@ -2,14 +2,13 @@ pragma solidity ^0.4.0;
 
 contract Allowance {
 
-    address public owner;
-    address public beneficiary;
+    address private owner;
+    address private beneficiary;
     uint private contractStartDate;
     uint private contractLastWithdrawal;
     uint constant public MAX_WITHDRAWAL_AMOUNT = 1 ether / 100; // 0.01 ETH
     uint constant public MIN_WITHDRAWAL_FREQUENCY = 1 days; // 7 dias
     bool public withdrawnIsFrozen = false;
-
 
     event FundsAdded(uint _amount);
     event BeneficiaryUpdated(address _beneficiary);
@@ -92,6 +91,10 @@ contract Allowance {
 
     function getBeneficiary() public view returns(address) {
         return beneficiary;
+    } 
+
+    function getOwner() public view returns(address) {
+        return owner;
     } 
 
     function setLastWithdrawalDate() private {
