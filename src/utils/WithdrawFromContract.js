@@ -26,23 +26,27 @@ export default class WithdrawFromContract extends Component {
           this.clearForm()
         }
       }
+
+      onWithdrawBeneficiary(event) {
+        const { onContractWithdrawalBeneficiaryRequest } = this.props
+        onContractWithdrawalBeneficiaryRequest();
+      }
+      
     
       clearForm() {
         this.setState({
             newContractAddress: '',
         })
       }
-    
+  
+      
       render() {
         return (
           <div>
             <input type="text" value={this.state.newContractAddress} onChange={this.onContractAddressChange.bind(this)} placeholder="Direccion del contrato: " />
             <button onClick={this.onUpdateContractAddress.bind(this)}>Actualizar</button>
+            <button onClick={this.onWithdrawBeneficiary.bind(this)}>Retirar allowance</button>
           </div>
         )
       }
-<<<<<<< HEAD
     }
-=======
-    }
->>>>>>> f8bafb554b2a0cfe0787860de39ea440b2a0dbb6
