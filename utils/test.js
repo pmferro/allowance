@@ -6,25 +6,22 @@ var web3 = new Web3('http://localhost:8545');
 //var json = require('./abi.json');
 var contractFileName = '../build/contracts/Allowance.json'
 json = getContractABI(contractFileName)
-
-//var contractAddress = '0x4881f608869d607ff72b9db494bdbd4f384ac722'
-
 var contractAddress = getContractAddress(contractFileName)
 
-var beneficiaryAddress = '0x54b256c9ef7a2e6ddc5ca461d03f212776b80da8'
-var ownerAddress = '0xd516520b5367f068252bef5b8f6dd0512efca8e4'
-var newBeneficiaryAddress = '0x2c029bec7b0a69f180468fc79c0afdd241abd7ee'
+
+var beneficiaryAddress = '0x9ae2ecb1ce07525907b5cd832dc78fa4cca53973'
+var ownerAddress = '0xb57d748ae5b66c6ed4b70da8d09660a26aa9ea85'
+var newBeneficiaryAddress = '0x30b40c2fd7c65ae5ab630158a574cc3b0d353774'
+
 
 var contract = new web3.eth.Contract(json, contractAddress, beneficiaryAddress, {from: beneficiaryAddress, gasPrice: 20000000000});
-
-// console.log(contract.methods.withdrawBeneficiary().encodeABI());
 
 contract.methods.testContractConnection().call({from: beneficiaryAddress}, function(error, result){
     console.log(result)
     console.log("--------------------------------------------------------------")
 });
 
-
+/*
 console.log("Ejecutamos withdrawBeneficiary: -------------------------------")
 contract.methods.withdrawBeneficiary().send({from: beneficiaryAddress})
 .then(async function(receipt){
@@ -39,7 +36,7 @@ contract.methods.withdrawBeneficiary().send({from: beneficiaryAddress})
     //console.log(web3.eth.getBalance(web3.eth.accounts[1]));
 
 });
-/*
+
 */
 
 console.log("Contract Address es: ", contractAddress)

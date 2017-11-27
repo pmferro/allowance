@@ -6,8 +6,8 @@ contract Allowance {
     address public beneficiary;
     uint private contractStartDate;
     uint private contractLastWithdrawal;
-    uint constant private MAX_WITHDRAWAL_AMOUNT = 1 ether / 10; // 0.1 ETH
-    uint constant private MIN_WITHDRAWAL_FREQUENCY = 7 days; // 7 dias
+    uint constant public MAX_WITHDRAWAL_AMOUNT = 1 ether / 100; // 0.01 ETH
+    uint constant public MIN_WITHDRAWAL_FREQUENCY = 1 days; // 7 dias
     bool public withdrawnIsFrozen = false;
 
 

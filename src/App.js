@@ -79,6 +79,34 @@ class App extends Component {
     this.setState({ contractAddress: _contractAddress});
   }
   
+  async onContractWithdrawalBeneficiaryRequest() {
+    //this.setState({ contractAddress: _contractAddress});
+
+
+    try {
+      let contract = require('truffle-contract')
+      let allowance = contract(AllowanceContract)
+      allowance.setProvider(this.state.web3.currentProvider)
+  
+      let accounts = await this.state.web3.eth.getAccounts();
+      let allowanceInstance = await allowance.deployed();
+      //let contractBalanceValue = await allowanceInstance.getBalance.call({from: accounts[0]});
+      //let lastWithdrawalDateValue = await allowanceInstance.getLastWithdrawalDate();
+      let beneficiary = await allowanceInstance.getBeneficiary();
+
+      let WithdrawBeneficiaryPromise = await allowanceInstance.withdrawBeneficiary({from: beneficiary});
+
+      console.log(allowanceInstance)
+      console.log(WithdrawBeneficiaryPromise)  
+
+
+      } catch (e){
+    }
+
+
+  }
+
+
   render() {
     return (
       <div className="App">
@@ -97,7 +125,7 @@ class App extends Component {
               <p>lastWithdrawalDate: {this.state.lastWithdrawalDate}</p>
               <p>Contract Balance is: {this.state.contractBalance}</p>
               <hr/>
-              <WithdrawFromContract onContractAddressAdded={this.onContractAddressAdded.bind(this)} />
+              <WithdrawFromContract onContractAddressAdded={this.onContractAddressAdded.bind(this)} onContractWithdrawalBeneficiaryRequest={this.onContractWithdrawalBeneficiaryRequest.bind(this)} />
             </div>
           </div>
         </main>
