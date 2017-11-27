@@ -41,4 +41,8 @@ export default class WithdrawFromContract extends Component {
           </div>
         )
       }
+<<<<<<< HEAD
     }
+=======
+    }
+>>>>>>> f8bafb554b2a0cfe0787860de39ea440b2a0dbb6
