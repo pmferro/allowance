@@ -47,9 +47,12 @@ export default class WithdrawFromContract extends Component {
           ...this.state,
           newValueAdded: value,
         })
-
       }
 
+      onWithdrawAllFunds(event) {
+        const { onWithdrawAllFundsRequest } = this.props
+        onWithdrawAllFundsRequest();
+      }
       /*
       onUpdateFundsAdded(event) {
         const { newValueAdded } = this.state
@@ -72,12 +75,14 @@ export default class WithdrawFromContract extends Component {
 
             switch (this.props.role) {
               case 'owner':
-                partial =
+                partial = 
                 <div>
-                <input type="text" onChange={this.onAddFundsChange.bind(this)} 
-                value={this.state.newValueAdded} placeholder="ether" />
-                <button onClick={this.onAddFunds.bind(this)}>Add Funds</button>
+                  <input type="text" onChange={this.onAddFundsChange.bind(this)} value={this.state.newValueAdded} placeholder="ether" />
+                  <button onClick={this.onAddFunds.bind(this)}>Add Funds</button>
+                  <button onClick={this.onWidthrawAllFunds.bind(this)}>Withdraw All Of Contract's Funds</button>
+                  <button onClick={this.onWithdrawBeneficiary.bind(this)}>Send Allowance to Beneficiary</button>
                 </div>
+
               break;
         
               case 'beneficiary':

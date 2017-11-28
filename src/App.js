@@ -127,9 +127,21 @@ class App extends Component {
       console.log(WithdrawBeneficiaryPromise);
       } catch (e){
     }
-
-
   }
+
+  async onWithdrawAllFundsRequest() {
+    
+        try {
+          let contract = require('truffle-contract')
+          let allowance = contract(AllowanceContract)
+          allowance.setProvider(this.state.web3.currentProvider)
+          let allowanceInstance = await allowance.deployed();
+          let owner = await allowanceInstance.getOwner();
+          let WithdrawAllFundsPromise = await allowanceInstance.withdrawOwnerAll({from: owner});
+          console.log(WithdrawAllFundsPromise);
+          } catch (e){
+        }
+      }
 
 
   async onAddFundsRequest(_addFundsValue) {
@@ -185,7 +197,7 @@ class App extends Component {
               <WithdrawFromContract 
                 //onContractAddressAdded={this.onContractAddressAdded.bind(this)} 
                 onAddFundsRequest={this.onAddFundsRequest.bind(this)} 
-                //onAddFundsAdded={this.onAddFundsAdded.bind(this)} 
+                onWithdrawAllFundsRequest={this.onWithdrawAllFundsRequest.bind(this)} 
                 onContractWithdrawalBeneficiaryRequest={this.onContractWithdrawalBeneficiaryRequest.bind(this)} 
                 role={this.state.role}
                 />
