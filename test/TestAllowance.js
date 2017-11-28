@@ -25,6 +25,13 @@ contract('Allowance', accounts => {
     assert.equal(contractNewBalance, contractPreviousBalance.toNumber() + fundsToAdd);
   }) 
 
+  it('Test UnFreeze Withdrawals', async() => {
+    await allowance.unFreeze({from: ownerAddress});
+    const withdrawnIsFrozen = await allowance.getWithdrawnIsFrozenStatus({from: ownerAddress});
+    //console.log("withdrawnIsFrozen:", withdrawnIsFrozen);
+    assert.equal(withdrawnIsFrozen, false);
+  }) 
+
   it('Test WithdrawBeneficiary', async() => {
     //const beneficiaryAddress = ""
     const beneficiaryPreviousBalance = web3.eth.getBalance(accounts[1])
@@ -42,5 +49,56 @@ contract('Allowance', accounts => {
     assert.equal(beneficiaryNewBalance.toNumber(), expectedBalance);
   });
 
+  it('Test Freeze Withdrawals', async() => {
+    await allowance.freeze({from: ownerAddress});
+    const withdrawnIsFrozen = await allowance.getWithdrawnIsFrozenStatus({from: ownerAddress});
+    //console.log("withdrawnIsFrozen:", withdrawnIsFrozen);
+    assert.equal(withdrawnIsFrozen, true);
+  }) 
+
+  it('Test WithdrawOwner', async() => {
+    const ownerPreviousBalance = web3.eth.getBalance(accounts[0])
+    const promiseResponse = await allowance.withdrawOwner(0.02 * ether, {from: ownerAddress});
+    const gasUsed = promiseResponse.receipt.gasUsed;
+    const ownerNewBalance = web3.eth.getBalance(accounts[0]);
+    const expectedBalance = ownerPreviousBalance.toNumber() + (0.02 * ether) - (gasUsed * 100 * shannon);
+    assert.equal(ownerNewBalance.toNumber(), expectedBalance);
+  });
+
+  it('Test WithdrawOwnerAll', async() => {
+    const ownerPreviousBalance = web3.eth.getBalance(accounts[0])
+    const contractBalance = await allowance.getBalance({from: ownerAddress});
+    const promiseResponse = await allowance.withdrawOwnerAll({from: ownerAddress});
+    const gasUsed = promiseResponse.receipt.gasUsed;
+    const ownerNewBalance = web3.eth.getBalance(accounts[0]);
+    const expectedBalance = ownerPreviousBalance.toNumber() + contractBalance.toNumber() - (gasUsed * 100 * shannon);
+    assert.equal(ownerNewBalance.toNumber(), expectedBalance);
+  }); 
+
+  it('Test Get Beneficiary Address', async() => {
+    const beneficiaryAddressTest = await allowance.getBeneficiary({from: beneficiaryAddress});
+    assert.equal(beneficiaryAddressTest, beneficiaryAddress);
+  })
+
+  it('Test Get Owner Address', async() => {
+    const ownerAddressTest = await allowance.getOwner({from: ownerAddress});
+    assert.equal(ownerAddressTest, ownerAddress);
+  })
+
+  it('Test Update Beneficiary Address', async() => {
+    await allowance.updateBeneficiary(accounts[2], {from: ownerAddress});
+    const newBeneficiaryAddress = await allowance.getBeneficiary({from: accounts[2]});    
+    assert.equal(newBeneficiaryAddress, accounts[2]);
+  })
+
+  it('Test Kill Contract', async() => {
+    const ownerPreviousBalance = web3.eth.getBalance(accounts[0])
+    const contractBalance = await allowance.getBalance({from: ownerAddress});
+    const promiseResponse = await allowance.kill({from: ownerAddress});
+    const gasUsed = promiseResponse.receipt.gasUsed;
+    const ownerNewBalance = web3.eth.getBalance(accounts[0]);
+    const expectedBalance = ownerPreviousBalance.toNumber() + contractBalance.toNumber() - (gasUsed * 100 * shannon);
+    assert.equal(ownerNewBalance.toNumber(), expectedBalance);
+  })
 
 })
