@@ -18,6 +18,7 @@ class App extends Component {
       storageValue: 0,
       contractAddress: "",
       contractBalance: "",
+      addFundsValue:0,
       lastWithdrawalDate: null,
       ownerAddress: "",
       message: "Vacio",
@@ -112,6 +113,10 @@ class App extends Component {
     this.setState({ contractAddress: _contractAddress});
   }
   
+  async onAddFundsChange(_addFundsValue) {
+    this.setState({ addFundsValue: _addFundsValue});
+  }
+  
   async onContractWithdrawalBeneficiaryRequest() {
     //this.setState({ contractAddress: _contractAddress});
 
@@ -136,7 +141,7 @@ class App extends Component {
   }
 
 
-  async onAddFundsRequest() {
+  async onAddFundsRequest(_newValueAdded) {
 
     try {
       let contract = require('truffle-contract')
@@ -149,7 +154,9 @@ class App extends Component {
       //let lastWithdrawalDateValue = await allowanceInstance.getLastWithdrawalDate();
       //let beneficiary = await allowanceInstance.getBeneficiary();
       let owner = await allowanceInstance.getOwner();
-      let addFundsPromise = await allowanceInstance.addFunds({from: owner});
+      console.log(_newValueAdded);
+      console.log(this.state.addFundsValue)
+      let addFundsPromise = await allowanceInstance.addFunds({from: owner, value: _newValueAdded * 1000000000000000000});
       console.log(addFundsPromise);
 
       } catch (e){
@@ -188,6 +195,7 @@ class App extends Component {
               <WithdrawFromContract 
                 onContractAddressAdded={this.onContractAddressAdded.bind(this)} 
                 onAddFundsRequest={this.onAddFundsRequest.bind(this)} 
+                onAddFundsChange={this.onAddFundsChange.bind(this)} 
                 onContractWithdrawalBeneficiaryRequest={this.onContractWithdrawalBeneficiaryRequest.bind(this)} 
                 role={this.state.role}
                 />

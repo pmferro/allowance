@@ -5,13 +5,13 @@ export default class WithdrawFromContract extends Component {
       constructor(props) {
         super(props)
         this.state = {
-          newContractAddress: ''
+          newContractAddress: '',
+          newValueAdded: 0
         }
 
 
       }
     
-
       onContractAddressChange(event) {
         const { target } = event
         const { value } = target
@@ -21,8 +21,7 @@ export default class WithdrawFromContract extends Component {
         })
 
       }
-    
-
+  
       onUpdateContractAddress(event) {
         const { newContractAddress } = this.state
         const { onContractAddressAdded } = this.props
@@ -39,13 +38,32 @@ export default class WithdrawFromContract extends Component {
       
       onAddFunds(event) {
         const { onAddFundsRequest } = this.props
-        onAddFundsRequest();
+        onAddFundsRequest(1);
       }
 
+      onAddFundsChange(event) {
+        const { target } = event
+        const { value } = target
+        this.setState({
+          ...this.state,
+          newValueAdded: value,
+        })
+
+      }
+
+      onUpdateFundsAdded(event) {
+        const { newValueAdded } = this.state
+        const { onAddFundsChange } = this.props
+        if (newValueAdded !== "") {
+            onAddFundsChange(newValueAdded)
+          this.clearForm()
+        }
+      }
     
       clearForm() {
         this.setState({
             newContractAddress: '',
+            newValueAdded: ''
         })
       }
   
@@ -59,6 +77,8 @@ export default class WithdrawFromContract extends Component {
               case 'owner':
                 partial =
                 <div>
+                <input type="text" onChange={this.onAddFundsChange.bind(this)} 
+                value={this.state.newValueAdded} placeholder="ether" />
                 <button onClick={this.onAddFunds.bind(this)}>Add Funds</button>
                 </div>
               break;
