@@ -31,7 +31,12 @@ contract Allowance {
     modifier onlyBeneficiary(){
         require(msg.sender == beneficiary);
         _;
-    }    
+    }   
+
+    modifier onlyOwnerOrBeneficiary(){
+        require(msg.sender == beneficiary || msg.sender == owner);
+        _;
+    }     
 
     modifier freezeWithdrawBeneficiary(){
         require(withdrawnIsFrozen != true);
@@ -69,11 +74,12 @@ contract Allowance {
     }
 
     function withdrawOwnerAll() onlyOwner public {
-        owner.transfer(getBalance());
-        FundsWithdrawn(owner, MAX_WITHDRAWAL_AMOUNT);
+        uint remainingBalance = getBalance();
+        owner.transfer(remainingBalance);
+        FundsWithdrawn(owner, remainingBalance);
     }
 
-    function withdrawBeneficiary() onlyBeneficiary freezeWithdrawBeneficiary public {
+    function withdrawBeneficiary() onlyOwnerOrBeneficiary freezeWithdrawBeneficiary public {
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
         require(now - contractLastWithdrawal > 60);
@@ -105,8 +111,8 @@ contract Allowance {
         return contractLastWithdrawal;
     } 
 
-    function testContractConnection() public pure returns (string) {
-        return "Contract connection OK";
+    function getWithdrawnIsFrozenStatus() public view returns (bool) {
+        return withdrawnIsFrozen;
     }
 
     function() public onlyOwner payable {
