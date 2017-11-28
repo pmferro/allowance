@@ -67,5 +67,3 @@ testrpc -l 4500000000000 // gasLimit
 - modifier noreentrancy
 - KOVAN
 - Ver ENS
-
-

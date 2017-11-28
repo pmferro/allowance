@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-//import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
 import AllowanceContract from '../build/contracts/Allowance.json'
 import getWeb3 from './utils/getWeb3'
 
@@ -15,13 +14,12 @@ class App extends Component {
     super(props)
 
     this.state = {
-      storageValue: 0,
       contractAddress: "",
       contractBalance: "",
-      addFundsValue:0,
+      addFundsValue: 0,
       lastWithdrawalDate: null,
       ownerAddress: "",
-      message: "Vacio",
+      message: "",
       role: "",
       web3: null
     }
@@ -46,12 +44,6 @@ class App extends Component {
   }
 
   async instantiateContract() {
-    /*
-     * SMART CONTRACT EXAMPLE
-     *
-     * Normally these functions would be called in the context of a
-     * state management library, but for convenience I've placed them here.
-     */
 
     try {
       let contract = require('truffle-contract')
@@ -89,15 +81,12 @@ class App extends Component {
       console.log("Owner Balance:",ownerBalance/1000000000000000000)
 
       let contractBalance = await this.state.web3.eth.getBalance(allowanceInstance.address)
-      console.log("Contract Balance:",contractBalance/1000000000000000000)
+      console.log("Contract Balance:", contractBalance/1000000000000000000)
 
 
       let contractBalanceValue = await allowanceInstance.getBalance.call({from: accounts[0]});
       let lastWithdrawalDateValue = await allowanceInstance.getLastWithdrawalDate();
-      /*
-      console.log(lastWithdrawalDateValue)
-      console.log(allowanceInstance)
-      */
+
       this.setState({ contractAddress: allowanceInstance.address});
       this.setState({ ownerAddress: ownerAccount});
       this.setState({ beneficiaryAddress: beneficiaryAccount});
@@ -109,17 +98,19 @@ class App extends Component {
     }
   }
 
+  /*
   async onContractAddressAdded(_contractAddress) {
     this.setState({ contractAddress: _contractAddress});
   }
-  
-  async onAddFundsChange(_addFundsValue) {
+  */
+
+  /*
+  async onAddFundsAdded(_addFundsValue) {
     this.setState({ addFundsValue: _addFundsValue});
   }
-  
-  async onContractWithdrawalBeneficiaryRequest() {
-    //this.setState({ contractAddress: _contractAddress});
+  */
 
+  async onContractWithdrawalBeneficiaryRequest() {
 
     try {
       let contract = require('truffle-contract')
@@ -141,7 +132,9 @@ class App extends Component {
   }
 
 
-  async onAddFundsRequest(_newValueAdded) {
+  async onAddFundsRequest(_addFundsValue) {
+
+    let addFundsValue = _addFundsValue * 1000000000000000000
 
     try {
       let contract = require('truffle-contract')
@@ -154,14 +147,13 @@ class App extends Component {
       //let lastWithdrawalDateValue = await allowanceInstance.getLastWithdrawalDate();
       //let beneficiary = await allowanceInstance.getBeneficiary();
       let owner = await allowanceInstance.getOwner();
-      console.log(_newValueAdded);
-      console.log(this.state.addFundsValue)
-      let addFundsPromise = await allowanceInstance.addFunds({from: owner, value: _newValueAdded * 1000000000000000000});
+    
+
+      let addFundsPromise = await allowanceInstance.addFunds({from: owner, value: addFundsValue });
       console.log(addFundsPromise);
 
       } catch (e){
     }
-
 
   }
 
@@ -169,9 +161,7 @@ class App extends Component {
 
   render() {
 
-    var messageText = <div>{this.state.message} {this.state.role}</div>
-
-    
+    var messageText = <div>{this.state.message} - {this.state.role}</div>
     
     return (
       <div className="App">
@@ -193,9 +183,9 @@ class App extends Component {
               <hr/>
               <div id="navbar">
               <WithdrawFromContract 
-                onContractAddressAdded={this.onContractAddressAdded.bind(this)} 
+                //onContractAddressAdded={this.onContractAddressAdded.bind(this)} 
                 onAddFundsRequest={this.onAddFundsRequest.bind(this)} 
-                onAddFundsChange={this.onAddFundsChange.bind(this)} 
+                //onAddFundsAdded={this.onAddFundsAdded.bind(this)} 
                 onContractWithdrawalBeneficiaryRequest={this.onContractWithdrawalBeneficiaryRequest.bind(this)} 
                 role={this.state.role}
                 />

@@ -5,13 +5,11 @@ export default class WithdrawFromContract extends Component {
       constructor(props) {
         super(props)
         this.state = {
-          newContractAddress: '',
           newValueAdded: 0
         }
-
-
       }
     
+      /*
       onContractAddressChange(event) {
         const { target } = event
         const { value } = target
@@ -21,7 +19,7 @@ export default class WithdrawFromContract extends Component {
         })
 
       }
-  
+      
       onUpdateContractAddress(event) {
         const { newContractAddress } = this.state
         const { onContractAddressAdded } = this.props
@@ -30,6 +28,7 @@ export default class WithdrawFromContract extends Component {
           this.clearForm()
         }
       }
+      */
 
       onWithdrawBeneficiary(event) {
         const { onContractWithdrawalBeneficiaryRequest } = this.props
@@ -38,7 +37,7 @@ export default class WithdrawFromContract extends Component {
       
       onAddFunds(event) {
         const { onAddFundsRequest } = this.props
-        onAddFundsRequest(1);
+        onAddFundsRequest(this.state.newValueAdded);
       }
 
       onAddFundsChange(event) {
@@ -51,6 +50,7 @@ export default class WithdrawFromContract extends Component {
 
       }
 
+      /*
       onUpdateFundsAdded(event) {
         const { newValueAdded } = this.state
         const { onAddFundsChange } = this.props
@@ -58,11 +58,10 @@ export default class WithdrawFromContract extends Component {
             onAddFundsChange(newValueAdded)
           this.clearForm()
         }
-      }
+      }*/
     
       clearForm() {
         this.setState({
-            newContractAddress: '',
             newValueAdded: ''
         })
       }
@@ -70,8 +69,6 @@ export default class WithdrawFromContract extends Component {
       
       render() {
         var partial;
-        //console.log(this.props);
-        
 
             switch (this.props.role) {
               case 'owner':
@@ -106,10 +103,3 @@ export default class WithdrawFromContract extends Component {
         )
       }
     }
-
-    /*
-    <input type="text" value={this.state.newContractAddress} 
-                onChange={this.onContractAddressChange.bind(this)} 
-                placeholder="Direccion del contrato: " />
-                
-    */
