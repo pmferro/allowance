@@ -8,27 +8,6 @@ export default class WithdrawFromContract extends Component {
           newValueAdded: 0
         }
       }
-    
-      /*
-      onContractAddressChange(event) {
-        const { target } = event
-        const { value } = target
-        this.setState({
-          ...this.state,
-          newContractAddress: value,
-        })
-
-      }
-      
-      onUpdateContractAddress(event) {
-        const { newContractAddress } = this.state
-        const { onContractAddressAdded } = this.props
-        if (newContractAddress !== "") {
-            onContractAddressAdded(newContractAddress)
-          this.clearForm()
-        }
-      }
-      */
 
       onWithdrawBeneficiary(event) {
         const { onContractWithdrawalBeneficiaryRequest } = this.props
@@ -53,15 +32,6 @@ export default class WithdrawFromContract extends Component {
         const { onWithdrawAllFundsRequest } = this.props
         onWithdrawAllFundsRequest();
       }
-      /*
-      onUpdateFundsAdded(event) {
-        const { newValueAdded } = this.state
-        const { onAddFundsChange } = this.props
-        if (newValueAdded !== "") {
-            onAddFundsChange(newValueAdded)
-          this.clearForm()
-        }
-      }*/
     
       clearForm() {
         this.setState({
@@ -79,10 +49,7 @@ export default class WithdrawFromContract extends Component {
                 <div>
                   <input type="text" onChange={this.onAddFundsChange.bind(this)} value={this.state.newValueAdded} placeholder="ether" />
                   <button onClick={this.onAddFunds.bind(this)}>Add Funds</button>
-                  <button onClick={this.onWidthrawAllFunds.bind(this)}>Withdraw All Of Contract's Funds</button>
-                  <button onClick={this.onWithdrawBeneficiary.bind(this)}>Send Allowance to Beneficiary</button>
-                </div>
-
+               </div>
               break;
         
               case 'beneficiary':
@@ -94,10 +61,6 @@ export default class WithdrawFromContract extends Component {
         
               case '':
                 partial = <p>xxx Access Denied xxx</p>
-              break;
-
-              default:
-                partial = ""
               break;
             }
             

@@ -9,13 +9,17 @@ import './App.css'
 
 import WithdrawFromContract from './utils/WithdrawFromContract'
 
+var ether = 1000000000000000000;
+
 class App extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
       contractAddress: "",
-      contractBalance: "",
+      contractBalance: 0,
+      ownerBalance: 0,
+      beneficiaryBalance: 0,
       addFundsValue: 0,
       lastWithdrawalDate: null,
       ownerAddress: "",
@@ -75,13 +79,13 @@ class App extends Component {
       }
 
       let beneficiaryBalance = await this.state.web3.eth.getBalance(beneficiaryAccount)
-      console.log("Beneficiary Balance:",beneficiaryBalance/1000000000000000000)
+      console.log("Beneficiary Balance:",beneficiaryBalance/ether)
 
       let ownerBalance = await this.state.web3.eth.getBalance(ownerAccount)
-      console.log("Owner Balance:",ownerBalance/1000000000000000000)
+      console.log("Owner Balance:",ownerBalance/ether)
 
       let contractBalance = await this.state.web3.eth.getBalance(allowanceInstance.address)
-      console.log("Contract Balance:", contractBalance/1000000000000000000)
+      console.log("Contract Balance:", contractBalance/ether)
 
 
       let contractBalanceValue = await allowanceInstance.getBalance.call({from: accounts[0]});
@@ -89,26 +93,16 @@ class App extends Component {
 
       this.setState({ contractAddress: allowanceInstance.address});
       this.setState({ ownerAddress: ownerAccount});
+      this.setState({ ownerBalance: ownerBalance/ether});
       this.setState({ beneficiaryAddress: beneficiaryAccount});
+      this.setState({ beneficiaryBalance: beneficiaryBalance/ether});
       this.setState({ lastWithdrawalDate: lastWithdrawalDateValue.c[0]});
-      this.setState({ contractBalance: contractBalanceValue.c[0]});
+      this.setState({ contractBalance: contractBalance/ether});
     
 
       } catch (e){
     }
   }
-
-  /*
-  async onContractAddressAdded(_contractAddress) {
-    this.setState({ contractAddress: _contractAddress});
-  }
-  */
-
-  /*
-  async onAddFundsAdded(_addFundsValue) {
-    this.setState({ addFundsValue: _addFundsValue});
-  }
-  */
 
   async onContractWithdrawalBeneficiaryRequest() {
 
@@ -146,7 +140,7 @@ class App extends Component {
 
   async onAddFundsRequest(_addFundsValue) {
 
-    let addFundsValue = _addFundsValue * 1000000000000000000
+    let addFundsValue = _addFundsValue * ether
 
     try {
       let contract = require('truffle-contract')
@@ -189,13 +183,14 @@ class App extends Component {
               <h2>Allowance Smart Contract Example</h2>
               <p>Contract Address: {this.state.contractAddress}</p>
               <p>Owner Address is: {this.state.ownerAddress}</p>
+              <p>Owner Balance is: {this.state.ownerBalance} eth</p>
               <p>Beneficiary Address is: {this.state.beneficiaryAddress}</p>
+              <p>Beneficiary Balance is: {this.state.beneficiaryBalance} eth</p>
               <p>lastWithdrawalDate: {this.state.lastWithdrawalDate}</p>
-              <p>Contract Balance is: {this.state.contractBalance}</p>
+              <p>Contract Balance is: {this.state.contractBalance} eth</p>
               <hr/>
               <div id="navbar">
               <WithdrawFromContract 
-                //onContractAddressAdded={this.onContractAddressAdded.bind(this)} 
                 onAddFundsRequest={this.onAddFundsRequest.bind(this)} 
                 onWithdrawAllFundsRequest={this.onWithdrawAllFundsRequest.bind(this)} 
                 onContractWithdrawalBeneficiaryRequest={this.onContractWithdrawalBeneficiaryRequest.bind(this)} 
