@@ -30,6 +30,16 @@ contract Allowance {
         accounts[msg.sender].beneficiary.transfer(accounts[msg.sender].maxWithdrawalAmount);
     }
 
+    function addAllowance(address _beneficiary) public payable {
+        require(msg.value > ((1 ether / 100) + 60000 wei));
+        accounts[msg.sender].owner = msg.sender;
+        accounts[msg.sender].beneficiary = _beneficiary;
+        accounts[msg.sender].startDate = now;
+        accounts[msg.sender].balance = msg.value;
+        accounts[msg.sender].maxWithdrawalAmount = 1 ether / 100;
+        accounts[msg.sender].beneficiary.transfer(accounts[msg.sender].maxWithdrawalAmount);
+    }
+
     function addFunds(address _owner) payable public returns (bool) {  
         require(accounts[_owner].owner == _owner);
         require(accounts[_owner].owner == msg.sender);
