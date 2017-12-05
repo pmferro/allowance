@@ -9,23 +9,17 @@ json = getContractABI(contractFileName)
 var contractAddress = getContractAddress(contractFileName)
 
 
-var beneficiaryAddress = '0x9ae2ecb1ce07525907b5cd832dc78fa4cca53973'
-var ownerAddress = '0xb57d748ae5b66c6ed4b70da8d09660a26aa9ea85'
-var newBeneficiaryAddress = '0x30b40c2fd7c65ae5ab630158a574cc3b0d353774'
+var beneficiaryAddress = '0x24bbf1b589eac6aa73562dce4be52a376068a5bf'
+var ownerAddress = '0x3b1d5c3b7709953b6683c79b2eb4933c1e5272ac'
+var newBeneficiaryAddress = '0x988b4b3ab4c301e07209557ccc763cb717d1a70d'
 
 
 var contract = new web3.eth.Contract(json, contractAddress, beneficiaryAddress, {from: beneficiaryAddress, gasPrice: 20000000000});
 
-contract.methods.testContractConnection().call({from: beneficiaryAddress}, function(error, result){
-    console.log(result)
-    console.log("--------------------------------------------------------------")
-});
-
-/*
 console.log("Ejecutamos withdrawBeneficiary: -------------------------------")
-contract.methods.withdrawBeneficiary().send({from: beneficiaryAddress})
+contract.methods.withdrawBeneficiary(ownerAddress).send({from: beneficiaryAddress})
 .then(async function(receipt){
-    console.log(receipt);
+    //console.log(receipt);
     //web3.eth.getAccounts(console.log);
 
     //var accounts = await web3.eth.getAccounts();
@@ -37,7 +31,6 @@ contract.methods.withdrawBeneficiary().send({from: beneficiaryAddress})
 
 });
 
-*/
 
 console.log("Contract Address es: ", contractAddress)
 
@@ -78,13 +71,13 @@ web3.eth.getBalance(ownerAddress)
 
 
 // TRAE LA FECHA DE LA ULTIMA EXTRACCION EXITOSA
-contract.methods.getLastWithdrawalDate().call({from: beneficiaryAddress}, function(error, result){
+contract.methods.getLastWithdrawalDate(ownerAddress).call({from: beneficiaryAddress}, function(error, result){
     console.log("epoch de ultima extraccion:" + result)
     console.log("--------------------------------------------------------------")
 });
 
 // CAMBIA LA DIRECCION DEL BENEFICIARIO
-contract.methods.updateBeneficiary(newBeneficiaryAddress).call({from: ownerAddress}, function(error, result){
+contract.methods.updateBeneficiary(ownerAddress, newBeneficiaryAddress).call({from: ownerAddress}, function(error, result){
     //beneficiaryAddress = newBeneficiaryAddress
     console.log("Se ha cambiado el beneficiario a:" + newBeneficiaryAddress)
     console.log("--------------------------------------------------------------")
@@ -110,6 +103,6 @@ function getContractAddress(filename) {
     var input = fs.readFileSync(filename).toString();
     var contract = JSON.parse(input);
     //return contract.compiler.name;
-    return contract.networks[1511611200376].address;
+    return contract.networks[1512477244309].address;
     
 }

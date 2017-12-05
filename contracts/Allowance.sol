@@ -2,13 +2,18 @@ pragma solidity ^0.4.0;
 
 contract Allowance {
 
-    address private owner;
-    address private beneficiary;
-    uint private contractStartDate;
-    uint private contractLastWithdrawal;
-    uint constant public MAX_WITHDRAWAL_AMOUNT = 1 ether / 100; // 0.01 ETH
-    uint constant public MIN_WITHDRAWAL_FREQUENCY = 1 days; // 7 dias
-    bool public withdrawnIsFrozen = false;
+    struct AllowanceData {
+        address owner;
+        address beneficiary;
+        uint startDate;
+        uint lastWithdrawalDate;
+        uint maxWithdrawalAmount;
+        uint withdrawalFrequency;
+        bool withdrawalIsFronzen;
+        uint balance;
+      }
+
+    mapping (address => AllowanceData) public accounts;
 
     event FundsAdded(uint _amount);
     event BeneficiaryUpdated(address _beneficiary);
@@ -16,107 +21,103 @@ contract Allowance {
     event WithdrawIsFrozen(bool _frozen, uint _date);
 
     function Allowance(address _beneficiary) public payable {
-        owner = msg.sender;
-        beneficiary = _beneficiary;
-        contractStartDate = now;
-        //contractLastWithdrawal = now;
-        beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
+        require(msg.value > ((1 ether / 100) + 60000 wei));
+        accounts[msg.sender].owner = msg.sender;
+        accounts[msg.sender].beneficiary = _beneficiary;
+        accounts[msg.sender].startDate = now;
+        accounts[msg.sender].balance = msg.value;
+        accounts[msg.sender].maxWithdrawalAmount = 1 ether / 100;
+        accounts[msg.sender].beneficiary.transfer(accounts[msg.sender].maxWithdrawalAmount);
     }
 
-    modifier onlyOwner(){
-        require(msg.sender == owner);
-        _;
-    }
-
-    modifier onlyBeneficiary(){
-        require(msg.sender == beneficiary);
-        _;
-    }   
-
-    modifier onlyOwnerOrBeneficiary(){
-        require(msg.sender == beneficiary || msg.sender == owner);
-        _;
-    }     
-
-    modifier freezeWithdrawBeneficiary(){
-        require(withdrawnIsFrozen != true);
-        _;
-    }    
-    
-    function addFunds() onlyOwner payable public returns (bool) {  
+    function addFunds(address _owner) payable public returns (bool) {  
+        require(accounts[_owner].owner == _owner);
+        require(accounts[_owner].owner == msg.sender);
+        accounts[_owner].balance += msg.value;
         FundsAdded(msg.value);   
         return true;
     }
 
-    function freeze() onlyOwner public {
-        withdrawnIsFrozen = true;
+    function freeze(address _owner) public {
+        require(accounts[_owner].owner == _owner);
+        require(accounts[_owner].owner == msg.sender);
+        accounts[_owner].withdrawalIsFronzen = true;
         WithdrawIsFrozen(true, now);
     }
 
-    function unFreeze() onlyOwner public {
-        withdrawnIsFrozen = false;
+    function unFreeze(address _owner) public {
+        require(accounts[_owner].owner == _owner);
+        require(accounts[_owner].owner == msg.sender);
+        accounts[_owner].withdrawalIsFronzen = false;
         WithdrawIsFrozen(false, now);
-    }    
+    }   
 
-    function kill() onlyOwner public {
-        selfdestruct(owner);
+    function getBalance(address _owner) public view returns (uint) {
+        require(accounts[_owner].owner == _owner);
+        require(accounts[_owner].owner == msg.sender);
+        return accounts[_owner].balance;
     }
 
-    function getBalance() onlyOwner public view returns (uint) {
-        return this.balance;
-    }
-
-    function withdrawOwner(uint _amount) onlyOwner public {
-        var amount = _amount;
-        if (amount <= getBalance()) {
-            owner.transfer(_amount);
+    function withdrawOwner(address _owner, uint _amount) public {
+        require(accounts[_owner].owner == _owner);
+        require(accounts[_owner].owner == msg.sender);
+        if (_amount <= accounts[_owner].balance) {
+            accounts[_owner].balance -= _amount;
+            accounts[_owner].owner.transfer(_amount);
         }
     }
 
-    function withdrawOwnerAll() onlyOwner public {
-        uint remainingBalance = getBalance();
-        owner.transfer(remainingBalance);
-        FundsWithdrawn(owner, remainingBalance);
+    function withdrawOwnerAll(address _owner) public {
+        require(accounts[_owner].owner == _owner);
+        require(accounts[_owner].owner == msg.sender);
+        uint remainingBalance = getBalance(_owner);
+        accounts[_owner].owner.transfer(remainingBalance);
+        FundsWithdrawn(_owner, remainingBalance);
     }
 
-    function withdrawBeneficiary() onlyOwnerOrBeneficiary freezeWithdrawBeneficiary public {
+    function withdrawBeneficiary(address _owner) public {
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
-        require(now - contractLastWithdrawal > 60);
+        require(accounts[_owner].owner == _owner);
+        require(accounts[_owner].beneficiary == msg.sender);
+        require(now - accounts[_owner].lastWithdrawalDate > 60);
         //if (now - contractLastWithdrawal > 60) {
-        setLastWithdrawalDate();
-        beneficiary.transfer(MAX_WITHDRAWAL_AMOUNT);
-        FundsWithdrawn(beneficiary, MAX_WITHDRAWAL_AMOUNT);
+        setLastWithdrawalDate(_owner);
+        accounts[_owner].balance -= accounts[_owner].maxWithdrawalAmount;
+        accounts[_owner].beneficiary.transfer(accounts[_owner].maxWithdrawalAmount);
+        FundsWithdrawn(accounts[_owner].beneficiary, accounts[_owner].maxWithdrawalAmount);
         //}
     }
 
-    function updateBeneficiary(address _beneficiary) onlyOwner public {
-        beneficiary = _beneficiary;
-        BeneficiaryUpdated(beneficiary);
+    function updateBeneficiary(address _owner, address _beneficiary) public {
+        require(accounts[_owner].owner == _owner);
+        require(accounts[_owner].owner == msg.sender);
+        accounts[_owner].beneficiary = _beneficiary;
+        BeneficiaryUpdated(accounts[_owner].beneficiary);
     }
 
-    function getBeneficiary() public view returns(address) {
-        return beneficiary;
+    function getBeneficiary(address _owner) public view returns(address) {
+        return accounts[_owner].beneficiary;
     } 
 
-    function getOwner() public view returns(address) {
-        return owner;
+    function getOwner(address _owner) public view returns(address) {
+        return  accounts[_owner].owner;
     } 
 
-    function setLastWithdrawalDate() private {
-        contractLastWithdrawal = now;
+    function setLastWithdrawalDate(address _owner) private {
+        accounts[_owner].lastWithdrawalDate = now;
     }
 
-    function getLastWithdrawalDate() public view returns(uint) {
-        return contractLastWithdrawal;
+    function getLastWithdrawalDate(address _owner) public view returns(uint) {
+        return accounts[_owner].lastWithdrawalDate;
     } 
 
-    function getWithdrawnIsFrozenStatus() public view returns (bool) {
-        return withdrawnIsFrozen;
+    function getWithdrawnIsFrozenStatus(address _owner) public view returns (bool) {
+        return accounts[_owner].withdrawalIsFronzen;
     }
 
-    function() public onlyOwner payable {
-        this.addFunds();
+    function() public payable {
+        this.addFunds(msg.sender);
     }
 
 }
