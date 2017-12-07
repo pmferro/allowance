@@ -2,112 +2,124 @@ pragma solidity ^0.4.0;
 
 contract Allowance {
 
-    struct AllowanceData {
+    struct AccountsData {
         address owner;
+        address[] beneficiaries;
+        mapping (address => SubAccountsData) subaccounts;
+        uint balance;
+    }
+
+    struct SubAccountsData {
+        address parent;
         address beneficiary;
         uint startDate;
         uint lastWithdrawalDate;
         uint maxWithdrawalAmount;
         uint withdrawalFrequency;
         bool withdrawalIsFronzen;
-        uint balance;
-      }
+    }
 
-    mapping (address => AllowanceData) public accounts;
+    mapping (address => AccountsData) public accounts;
 
-    event FundsAdded(uint _amount);
+
+    event FundsAdded(address _owner, uint _amount);
     event BeneficiaryUpdated(address _beneficiary);
-    event FundsWithdrawn(address _address, uint _amount);
+    event FundsWithdrawn(address _owner, address _beneficiary, uint _amount);
     event WithdrawIsFrozen(bool _frozen, uint _date);
 
-    function Allowance(address _beneficiary) public payable {
-        require(msg.value > ((1 ether / 100) + 60000 wei));
-        accounts[msg.sender].owner = msg.sender;
-        accounts[msg.sender].beneficiary = _beneficiary;
-        accounts[msg.sender].startDate = now;
-        accounts[msg.sender].balance = msg.value;
-        accounts[msg.sender].maxWithdrawalAmount = 1 ether / 100;
-        accounts[msg.sender].beneficiary.transfer(accounts[msg.sender].maxWithdrawalAmount);
+    function Allowance() public {
+
     }
 
-    function addAllowance(address _beneficiary) public payable {
+    function addAccount(address _beneficiary) public payable {
         require(msg.value > ((1 ether / 100) + 60000 wei));
         accounts[msg.sender].owner = msg.sender;
-        accounts[msg.sender].beneficiary = _beneficiary;
-        accounts[msg.sender].startDate = now;
-        accounts[msg.sender].balance = msg.value;
-        accounts[msg.sender].maxWithdrawalAmount = 1 ether / 100;
-        accounts[msg.sender].beneficiary.transfer(accounts[msg.sender].maxWithdrawalAmount);
+        AccountsData storage acc = accounts[msg.sender];
+        uint i = 0;
+        for (i = 0; i < (acc.beneficiaries.length - 1); i++) {
+            require(acc.beneficiaries[i] != _beneficiary);
+            // Subaccount already exists
+        }
+        acc.beneficiaries.push(_beneficiary);
+        acc.balance = msg.value;
+
+        // Create SubAccount
+        SubAccountsData storage sub = acc.subaccounts[_beneficiary];
+        sub.parent = acc.owner;
+        sub.startDate = now;
+        sub.maxWithdrawalAmount = 1 ether / 100;
+
+        // Initial Transfer
+        acc.balance -= sub.maxWithdrawalAmount;
+        sub.beneficiary.transfer(sub.maxWithdrawalAmount);
     }
 
-    function addFunds(address _owner) payable public returns (bool) {  
-        require(accounts[_owner].owner == _owner);
-        require(accounts[_owner].owner == msg.sender);
-        accounts[_owner].balance += msg.value;
-        FundsAdded(msg.value);   
+    modifier onlyOwner() { // Modifier
+        require(accounts[msg.sender].owner == msg.sender);
+        _;
+    } 
+
+    modifier onlyOwnerOrBeneficiary(address _owner) { // Modifier
+        require(accounts[msg.sender].owner == msg.sender || accounts[_owner].subaccounts[msg.sender].beneficiary == msg.sender);
+        _;
+    } 
+
+    function addFunds() payable public onlyOwner returns (bool) {  
+        accounts[msg.sender].balance += msg.value;
+        FundsAdded(msg.sender, msg.value);   
         return true;
     }
 
-    function freeze(address _owner) public {
-        require(accounts[_owner].owner == _owner);
-        require(accounts[_owner].owner == msg.sender);
-        accounts[_owner].withdrawalIsFronzen = true;
+    function freeze(address _beneficiary) onlyOwner public {
+        accounts[msg.sender].subaccounts[_beneficiary].withdrawalIsFronzen = true;
         WithdrawIsFrozen(true, now);
     }
 
-    function unFreeze(address _owner) public {
-        require(accounts[_owner].owner == _owner);
-        require(accounts[_owner].owner == msg.sender);
-        accounts[_owner].withdrawalIsFronzen = false;
+    function unFreeze(address _beneficiary) onlyOwner public {
+        accounts[msg.sender].subaccounts[_beneficiary].withdrawalIsFronzen = false;
         WithdrawIsFrozen(false, now);
     }   
 
-    function getBalance(address _owner) public view returns (uint) {
-        require(accounts[_owner].owner == _owner);
-        require(accounts[_owner].owner == msg.sender);
-        return accounts[_owner].balance;
+    function getBalance() public view onlyOwner returns (uint) {
+        return accounts[msg.sender].balance;
     }
 
-    function withdrawOwner(address _owner, uint _amount) public {
-        require(accounts[_owner].owner == _owner);
-        require(accounts[_owner].owner == msg.sender);
-        if (_amount <= accounts[_owner].balance) {
-            accounts[_owner].balance -= _amount;
-            accounts[_owner].owner.transfer(_amount);
+    function withdrawOwner(uint _amount) onlyOwner public {
+        if (_amount <= accounts[msg.sender].balance) {
+            accounts[msg.sender].balance -= _amount;
+            accounts[msg.sender].owner.transfer(_amount);
         }
     }
 
-    function withdrawOwnerAll(address _owner) public {
-        require(accounts[_owner].owner == _owner);
-        require(accounts[_owner].owner == msg.sender);
-        uint remainingBalance = getBalance(_owner);
-        accounts[_owner].owner.transfer(remainingBalance);
-        FundsWithdrawn(_owner, remainingBalance);
+    function withdrawOwnerAll() onlyOwner public {
+        uint remainingBalance = getBalance();
+        accounts[msg.sender].owner.transfer(remainingBalance);
+        FundsWithdrawn(msg.sender, msg.sender, remainingBalance);
     }
 
-    function withdrawBeneficiary(address _owner) public {
+    function withdrawBeneficiary(address _owner, address _beneficiary) onlyOwnerOrBeneficiary(msg.sender) public {
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
-        require(accounts[_owner].owner == _owner);
-        require(accounts[_owner].beneficiary == msg.sender);
-        require(now - accounts[_owner].lastWithdrawalDate > 60);
+        require(now - accounts[_owner].subaccounts[msg.sender].lastWithdrawalDate > 60);
         //if (now - contractLastWithdrawal > 60) {
         setLastWithdrawalDate(_owner);
-        accounts[_owner].balance -= accounts[_owner].maxWithdrawalAmount;
-        accounts[_owner].beneficiary.transfer(accounts[_owner].maxWithdrawalAmount);
-        FundsWithdrawn(accounts[_owner].beneficiary, accounts[_owner].maxWithdrawalAmount);
+        accounts[_owner].balance -= accounts[_owner].subaccounts[_beneficiary].maxWithdrawalAmount;
+        accounts[_owner].subaccounts[_beneficiary].beneficiary.transfer(accounts[_owner].subaccounts[_beneficiary].maxWithdrawalAmount);
+        FundsWithdrawn(accounts[_owner].owner, accounts[_owner].subaccounts[_beneficiary].beneficiary, accounts[_owner].subaccounts[_beneficiary].maxWithdrawalAmount);
         //}
     }
 
+/*
     function updateBeneficiary(address _owner, address _beneficiary) public {
         require(accounts[_owner].owner == _owner);
         require(accounts[_owner].owner == msg.sender);
         accounts[_owner].beneficiary = _beneficiary;
         BeneficiaryUpdated(accounts[_owner].beneficiary);
     }
+*/
 
-    function getBeneficiary(address _owner) public view returns(address) {
-        return accounts[_owner].beneficiary;
+    function getBeneficiaries(address _owner) public view returns(address[]) {
+        return accounts[_owner].beneficiaries;
     } 
 
     function getOwner(address _owner) public view returns(address) {
@@ -115,19 +127,19 @@ contract Allowance {
     } 
 
     function setLastWithdrawalDate(address _owner) private {
-        accounts[_owner].lastWithdrawalDate = now;
+        accounts[_owner].subaccounts[msg.sender].lastWithdrawalDate = now;
     }
 
     function getLastWithdrawalDate(address _owner) public view returns(uint) {
-        return accounts[_owner].lastWithdrawalDate;
+        return accounts[_owner].subaccounts[msg.sender].lastWithdrawalDate;
     } 
 
     function getWithdrawnIsFrozenStatus(address _owner) public view returns (bool) {
-        return accounts[_owner].withdrawalIsFronzen;
+        return accounts[_owner].subaccounts[msg.sender].withdrawalIsFronzen;
     }
 
     function() public payable {
-        this.addFunds(msg.sender);
+        this.addFunds();
     }
 
 }
